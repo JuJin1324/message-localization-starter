@@ -66,6 +66,6 @@ public class ExceptionController {
     }
 
     private String getMessage(String code, Object[] args, Locale locale) {
-        return messageSource.getMessage(code, args, locale);
+        return messageSource.getMessage(String.format("exception.%s", code), args, locale);
     }
 }

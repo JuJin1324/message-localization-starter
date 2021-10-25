@@ -1,5 +1,6 @@
 package mvc.practice.starter.controllers;
 
+import mvc.practice.starter.api.controllers.UserApiController;
 import mvc.practice.starter.exceptions.ErrCode;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -30,7 +31,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ImportAutoConfiguration
 @ActiveProfiles("test")
 @SpringBootTest
-class UserControllerTest {
+class UserApiControllerTest {
     private static final Long   NOT_FOUND_USER_KEY = 99999999L;
     private static final String LANG_KO            = "ko";
     private static final String LANG_EN            = "en";
@@ -46,21 +47,21 @@ class UserControllerTest {
     private ExceptionController exceptionController;
 
     @BeforeEach
-    void setUp(@Autowired UserController userController) {
+    void setUp(@Autowired UserApiController userApiController) {
         TimeZone.setDefault(TimeZone.getTimeZone("UTC"));
 
-        mockMvc = MockMvcBuilders.standaloneSetup(userController)
+        mockMvc = MockMvcBuilders.standaloneSetup(userApiController)
                 .setControllerAdvice(exceptionController)
                 .addFilters(new CharacterEncodingFilter("UTF-8", true))  // 한글 깨짐 처리
                 .alwaysDo(print())
                 .build();
 
         notFoundResourceMessageKorean = messageSource.getMessage(
-                ErrCode.NOT_FOUND_RESOURCE.getCode() + ".message",
+                "exception." + ErrCode.NOT_FOUND_RESOURCE.getCode() + ".message",
                 null,
                 Locale.KOREAN);
         notFoundResourceMessageEnglish = messageSource.getMessage(
-                ErrCode.NOT_FOUND_RESOURCE.getCode() + ".message",
+                "exception." + ErrCode.NOT_FOUND_RESOURCE.getCode() + ".message",
                 null,
                 Locale.ENGLISH);
     }
@@ -78,7 +79,7 @@ class UserControllerTest {
     }
 
     private void reqGetSingleUser_notFound(Long userKey, String lang) throws Exception {
-        mockMvc.perform(get("/users/" + userKey + "?locale=" + lang))
+        mockMvc.perform(get("/api/users/" + userKey + "?locale=" + lang))
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.status").value(String.valueOf(HttpStatus.NOT_FOUND.value())))
                 .andExpect(jsonPath("$.code").value(HttpStatus.NOT_FOUND.getReasonPhrase()))
