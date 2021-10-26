@@ -1,6 +1,6 @@
 package mvc.practice.starter.controllers;
 
-import mvc.practice.starter.api.controllers.UserApiController;
+import mvc.practice.starter.controllers.api.UserApiController;
 import mvc.practice.starter.exceptions.ErrCode;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;

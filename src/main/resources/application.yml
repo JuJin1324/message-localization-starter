@@ -23,7 +23,7 @@ spring:
       pageable:
         default-page-size: 20
   messages:
-    basename: i18n/messages
+    basename: i18n/messages   # resources 에 message.yml 파일 위치
     encoding: UTF-8
 logging:
   level:

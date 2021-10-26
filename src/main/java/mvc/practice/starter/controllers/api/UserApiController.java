@@ -1,4 +1,4 @@
-package mvc.practice.starter.api.controllers;
+package mvc.practice.starter.controllers.api;
 
 import lombok.RequiredArgsConstructor;
 import mvc.practice.starter.dtos.UserDto;
