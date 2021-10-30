@@ -23,8 +23,7 @@ spring:
       pageable:
         default-page-size: 20
   messages:
-    basename: i18n/messages   # resources 에 message.yml 파일 위치
-    encoding: UTF-8
+    basename: i18n/messages,i18n/exceptions   # resources 에 messages.properties 파일 위치
 logging:
   level:
     org.hibernate.SQL: debug

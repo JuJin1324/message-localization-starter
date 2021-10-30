@@ -57,11 +57,11 @@ class UserApiControllerTest {
                 .build();
 
         notFoundResourceMessageKorean = messageSource.getMessage(
-                "exception." + ErrCode.NOT_FOUND_RESOURCE.getCode() + ".message",
+                ErrCode.NOT_FOUND_RESOURCE.name() + ".message",
                 null,
                 Locale.KOREAN);
         notFoundResourceMessageEnglish = messageSource.getMessage(
-                "exception." + ErrCode.NOT_FOUND_RESOURCE.getCode() + ".message",
+                ErrCode.NOT_FOUND_RESOURCE.name() + ".message",
                 null,
                 Locale.ENGLISH);
     }

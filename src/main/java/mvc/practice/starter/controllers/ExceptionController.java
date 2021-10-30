@@ -31,12 +31,8 @@ public class ExceptionController {
     public ResFailureBody handleException(HttpServletRequest request,
                                           final Exception e) {
         log.error(e.getMessage());
-
         Locale locale = new Locale(request.getParameter("locale"));
-        ErrCode errCode = ErrCode.UN_KNOWN;
-        String code = getMessage(errCode.getCode(), null, locale);
-        String message = getMessage(errCode.getCode() + ".message", null, locale);
-        return new ResFailureBody(HttpStatus.INTERNAL_SERVER_ERROR, code, message);
+        return getResFailureBody(locale, ErrCode.UN_KNOWN, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @ExceptionHandler
@@ -44,12 +40,8 @@ public class ExceptionController {
     public ResFailureBody handleBadRequestException(HttpServletRequest request,
                                                     final BadRequestException e) {
         log.error(e.getMessage());
-
         Locale locale = new Locale(request.getParameter("locale"));
-        ErrCode errCode = e.getErrCode();
-        String code = getMessage(errCode.getCode(), null, locale);
-        String message = getMessage(errCode.getCode() + ".message", null, locale);
-        return new ResFailureBody(HttpStatus.BAD_REQUEST, code, message);
+        return getResFailureBody(locale, e.getErrCode(), HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler
@@ -57,15 +49,13 @@ public class ExceptionController {
     public ResFailureBody handleNotFoundException(HttpServletRequest request,
                                                   final NotFoundResourceException e) {
         log.error(e.getMessage());
-
         Locale locale = new Locale(request.getParameter("locale"));
-        ErrCode errCode = e.getErrCode();
-        String code = getMessage(errCode.getCode(), null, locale);
-        String message = getMessage(errCode.getCode() + ".message", null, locale);
-        return new ResFailureBody(HttpStatus.NOT_FOUND, code, message);
+        return getResFailureBody(locale, e.getErrCode(), HttpStatus.NOT_FOUND);
     }
 
-    private String getMessage(String code, Object[] args, Locale locale) {
-        return messageSource.getMessage(String.format("exception.%s", code), args, locale);
+    private ResFailureBody getResFailureBody(Locale locale, ErrCode errCode, HttpStatus httpStatus) {
+        String code = messageSource.getMessage(errCode.name() + ".code", null, locale);
+        String message = messageSource.getMessage(errCode.name() + ".message", null, locale);
+        return new ResFailureBody(httpStatus, code, message);
     }
 }
