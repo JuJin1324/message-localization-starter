@@ -36,9 +36,11 @@ class UserApiControllerTest {
     private static final String LANG_KO            = "ko";
     private static final String LANG_EN            = "en";
 
-    private        MockMvc      mockMvc;
-    private static String       notFoundResourceMessageKorean;
-    private static String       notFoundResourceMessageEnglish;
+    private        MockMvc mockMvc;
+    private static String  notFoundResourceMessageKorean;
+    private static String  notFoundResourceCodeKorean;
+    private static String  notFoundResourceMessageEnglish;
+    private static String  notFoundResourceCodeEnglish;
 
     @Autowired
     private MessageSource messageSource;
@@ -60,31 +62,52 @@ class UserApiControllerTest {
                 ErrCode.NOT_FOUND_RESOURCE.name() + ".message",
                 null,
                 Locale.KOREAN);
+        notFoundResourceCodeKorean = messageSource.getMessage(
+                ErrCode.NOT_FOUND_RESOURCE.name() + ".code",
+                null,
+                Locale.KOREAN);
         notFoundResourceMessageEnglish = messageSource.getMessage(
                 ErrCode.NOT_FOUND_RESOURCE.name() + ".message",
+                null,
+                Locale.ENGLISH);
+        notFoundResourceCodeEnglish = messageSource.getMessage(
+                ErrCode.NOT_FOUND_RESOURCE.name() + ".code",
                 null,
                 Locale.ENGLISH);
     }
 
     @Test
-    @DisplayName("[회원 단건 조회] 예외 처리 - 한글")
+    @DisplayName("[회원 단건 조회] 존재하지 않는 유저 처리 - 디폴트")
+    void getSingleUser_whenExceptionOccurred_Default() throws Exception {
+        reqGetSingleUser_notFound(NOT_FOUND_USER_KEY, null);
+    }
+
+    @Test
+    @DisplayName("[회원 단건 조회] 존재하지 않는 유저 처리 - 한글")
     void getSingleUser_whenExceptionOccurred_KOREAN() throws Exception {
         reqGetSingleUser_notFound(NOT_FOUND_USER_KEY, LANG_KO);
     }
 
     @Test
-    @DisplayName("[회원 단건 조회] 예외 처리 - 영어")
+    @DisplayName("[회원 단건 조회] 존재하지 않는 유저 처리 - 영어")
     void getSingleUser_whenExceptionOccurred_ENGLISH() throws Exception {
         reqGetSingleUser_notFound(NOT_FOUND_USER_KEY, LANG_EN);
     }
 
     private void reqGetSingleUser_notFound(Long userKey, String lang) throws Exception {
-        mockMvc.perform(get("/api/users/" + userKey + "?locale=" + lang))
+        String url = "/api/users/" + userKey;
+        if (lang != null) {
+            url += "?locale=" + lang;
+        }
+        mockMvc.perform(get(url))
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.status").value(String.valueOf(HttpStatus.NOT_FOUND.value())))
                 .andExpect(jsonPath("$.code").value(HttpStatus.NOT_FOUND.getReasonPhrase()))
                 .andExpect(jsonPath("$.message").value(
-                        lang.equals(LANG_KO) ? notFoundResourceMessageKorean : notFoundResourceMessageEnglish
+                        lang == null || lang.equals(LANG_KO) ? notFoundResourceMessageKorean : notFoundResourceMessageEnglish
+                ))
+                .andExpect(jsonPath("$.error").value(
+                        lang == null || lang.equals(LANG_KO) ? notFoundResourceCodeKorean : notFoundResourceCodeEnglish
                 ));
     }
 }

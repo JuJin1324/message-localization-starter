@@ -31,8 +31,7 @@ public class ExceptionController {
     public ResFailureBody handleException(HttpServletRequest request,
                                           final Exception e) {
         log.error(e.getMessage());
-        Locale locale = new Locale(request.getParameter("locale"));
-        return getResFailureBody(locale, ErrCode.UN_KNOWN, HttpStatus.INTERNAL_SERVER_ERROR);
+        return getResFailureBody(getLocale(request), ErrCode.UN_KNOWN, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @ExceptionHandler
@@ -40,8 +39,7 @@ public class ExceptionController {
     public ResFailureBody handleBadRequestException(HttpServletRequest request,
                                                     final BadRequestException e) {
         log.error(e.getMessage());
-        Locale locale = new Locale(request.getParameter("locale"));
-        return getResFailureBody(locale, e.getErrCode(), HttpStatus.BAD_REQUEST);
+        return getResFailureBody(getLocale(request), e.getErrCode(), HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler
@@ -49,8 +47,12 @@ public class ExceptionController {
     public ResFailureBody handleNotFoundException(HttpServletRequest request,
                                                   final NotFoundResourceException e) {
         log.error(e.getMessage());
-        Locale locale = new Locale(request.getParameter("locale"));
-        return getResFailureBody(locale, e.getErrCode(), HttpStatus.NOT_FOUND);
+        return getResFailureBody(getLocale(request), e.getErrCode(), HttpStatus.NOT_FOUND);
+    }
+
+    private Locale getLocale(HttpServletRequest request) {
+        String localeString = request.getParameter("locale");
+        return localeString == null ? Locale.KOREA : new Locale(localeString);
     }
 
     private ResFailureBody getResFailureBody(Locale locale, ErrCode errCode, HttpStatus httpStatus) {
